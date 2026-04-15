@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Mr. Robertson Clicker</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #0a3d91;
+    color: white;
+}
+
+/* Layout */
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+/* LEFT SIDE */
+.left {
+    width: 50%;
+    text-align: center;
+    padding: 20px;
+}
+
+/* RIGHT SIDE */
+.right {
+    width: 50%;
+    background: #082c6c;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+/* Counters */
+#count, #reps {
+    font-size: 2em;
+    margin: 10px;
+}
+
+/* Images */
+img {
+    width: 300px;
+    max-width: 80%;
+    border-radius: 15px;
+    cursor: pointer;
+    border: 4px solid white;
+    margin: 10px;
+    transition: transform 0.1s;
+}
+
+img:active {
+    transform: scale(0.95);
+}
+
+/* Buttons */
+button {
+    display: block;
+    width: 90%;
+    margin: 10px auto;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    background: white;
+    color: black;
+}
+
+/* Achievements */
+#achievements {
+    margin-top: 20px;
+    font-size: 0.9em;
+}
+</style>
+</head>
+
+<body>
+
+<h1 style="text-align:center;">🎺 Mr. Robertson Clicker 🎺</h1>
+<p style="text-align:center;">Click on Luke Robertson to get rich quick!</p>
+
+<div class="container">
+
+<!-- LEFT -->
+<div class="left">
+    <div id="count">0 Robertsons</div>
+    <div id="reps">0 Reps</div>
+
+    <h3>Director</h3>
+    <img src="main.png" onclick="clickMain()">
+
+    <h3>Practice</h3>
+    <img src="practice.png" onclick="practice()">
+</div>
+
+<!-- RIGHT -->
+<div class="right">
+    <h2>Upgrades</h2>
+    <div id="upgrades"></div>
+
+    <h2>Achievements</h2>
+    <div id="achievements"></div>
+</div>
+
+</div>
+
+<script>
+let robertsons = 0;
+let reps = 0;
+let perClick = 1;
+let repPower = 1;
+
+let achievements = [];
+
+let upgrades = [
+    {name:"Better Rehearsals", cost:20, power:2},
+    {name:"Section Leaders", cost:100, power:5},
+    {name:"Marching Fundamentals", cost:300, power:15},
+    {name:"Pep Band Energy", cost:800, power:40},
+    {name:"Private Lessons", cost:2000, power:100},
+    {name:"Full Ensemble Sync", cost:5000, power:250},
+    {name:"Elite Musicians", cost:12000, power:700},
+    {name:"State Champions", cost:30000, power:2000},
+    {name:"National Recognition", cost:80000, power:5000},
+    {name:"Ultimate Band Program", cost:200000, power:10000}
+];
+
+function clickMain() {
+    robertsons += perClick;
+    checkAchievements();
+    update();
+}
+
+function practice() {
+    reps += repPower;
+    robertsons += Math.floor(reps / 2);
+    checkAchievements();
+    update();
+}
+
+function buy(i) {
+    if (robertsons >= upgrades[i].cost) {
+        robertsons -= upgrades[i].cost;
+        perClick += upgrades[i].power;
+        repPower += Math.floor(upgrades[i].power / 2);
+        upgrades[i].cost = Math.floor(upgrades[i].cost * 1.7);
+        update();
+    }
+}
+
+function update() {
+    document.getElementById("count").innerText = robertsons + " Robertsons";
+    document.getElementById("reps").innerText = reps + " Reps";
+
+    let html = "";
+    upgrades.forEach((u, i) => {
+        html += `
+        <button onclick="buy(${i})">
+            <b>${u.name}</b><br>
+            Cost: ${u.cost}
+        </button>`;
+    });
+    document.getElementById("upgrades").innerHTML = html;
+
+    document.getElementById("achievements").innerHTML =
+        achievements.map(a => "🏆 " + a).join("<br>");
+}
+
+function checkAchievements() {
+    if (robertsons >= 100 && !achievements.includes("First Chair"))
+        achievements.push("First Chair");
+
+    if (robertsons >= 1000 && !achievements.includes("Band Kid"))
+        achievements.push("Band Kid");
+
+    if (robertsons >= 10000 && !achievements.includes("Marching Machine"))
+        achievements.push("Marching Machine");
+
+    if (robertsons >= 50000 && !achievements.includes("Director’s Favorite"))
+        achievements.push("Director’s Favorite");
+}
+
+update();
+</script>
+
+</body>
+</html>
